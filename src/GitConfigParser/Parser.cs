@@ -50,13 +50,13 @@ namespace GitConfigParser
                                                              from trailing in Parse.Or(Parse.LetterOrDigit,Parse.Char('-')).Many().Text()
                                                              select new ConfigItemKeyName(first+trailing)
                                                              ).Token();
-       
+       /*
         public static readonly Parser<ConfigItem> assign = (from kn in keyname
                                                             from eq in Parse.Char('=').Token()
                                                             from rhs in ( from first in Parse.CharExcept('"').AtLeastOnce().Text()
                                                                           from trail in Parse.CharExcept(";#").Many().Text() select first+trail).Optional())
                                                                           .Or((from v in quotedValue as Parser<ConfigItemQuotedIdentifier> select v.Identifier)) 
-                                                            ).Token();
+                                                            ).Token();*/
        
     }
 }
