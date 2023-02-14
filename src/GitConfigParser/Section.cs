@@ -8,6 +8,8 @@ namespace GitConfigParser
 {
     public class Section:Dictionary<string,string>
     {
+        readonly Dictionary<string, Section> sections = new Dictionary<string, Section>();
 
+        public Dictionary<string, Section> Sections => sections;
     }
 }
