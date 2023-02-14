@@ -8,7 +8,7 @@ namespace GitConfigParser
 {
     public class ConfigItemSection:ConfigItem
     {
-        public ConfigItemSection(string name,ConfigItemComment comment, ConfigItemQuotedIdentifier subsection)
+        public ConfigItemSection(string name,ConfigItemComment comment, string subsection)
         {
             Name = name;
             Comment = comment;
@@ -17,6 +17,6 @@ namespace GitConfigParser
 
         public string Name { get; }
         public ConfigItemComment Comment { get; }
-        public ConfigItemQuotedIdentifier Subsection { get; }
+        public string Subsection { get; }
     }
 }

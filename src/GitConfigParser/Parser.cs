@@ -9,7 +9,7 @@ namespace GitConfigParser
     public class Parser
     {
         public static readonly Parser<ConfigItem> comment = (from bc in Parse.Or(Parse.Char(';'), Parse.Char('#')).AtLeastOnce().Text()
-                                                        from ctext in Parse.Or(Parse.WhiteSpace, Parse.LetterOrDigit).Many().Text()
+                                                        from ctext in Parse.Or(Parse.CharExcept("\r\n"), Parse.LetterOrDigit).Many().Text()
                                                         select new ConfigItemComment(bc,ctext)).Token();
         public static readonly Parser<char> escapedquote = Parse.String("\\\"").Return('"');
         public static readonly Parser<char> escapedescape = Parse.String("\\\\").Return('\\');
@@ -18,7 +18,7 @@ namespace GitConfigParser
         public static readonly Parser<char> escapedbs = Parse.String("\\b").Return('\b');
         public static readonly Parser<char> escapedunknown = (from sl in Parse.Char('\\') from any in Parse.CharExcept('"') select any); //to follow all know escaped chars
 
-        public static readonly Parser<ConfigItem> quotedIdentifier = (from bq in Parse.Char('"')
+        public static readonly Parser<string> quotedIdentifier = (from bq in Parse.Char('"')
                                                                       from q in ( 
                                                                                 escapedquote
                                                                                 .Or(escapedescape)
@@ -26,8 +26,8 @@ namespace GitConfigParser
                                                                                 .Or(Parse.CharExcept('"'))
                                                                               ).Many().Text()
                                                                       from eq in Parse.Char('"')
-                                                                      select new ConfigItemQuotedIdentifier(q)).Token();
-        public static readonly Parser<ConfigItem> quotedValue = (from bq in Parse.Char('"')
+                                                                      select q).Token();
+        public static readonly Parser<string> quotedValue = (from bq in Parse.Char('"')
                                                                       from q in (
                                                                                 escapedquote
                                                                                 .Or(escapedescape)
@@ -38,25 +38,33 @@ namespace GitConfigParser
                                                                                 .Or(Parse.CharExcept('"'))
                                                                               ).Many().Text()
                                                                       from eq in Parse.Char('"')
-                                                                      select new ConfigItemQuotedIdentifier(q)).Token();
+                                                                      select q).Token();
 
         public static readonly Parser<ConfigItem> section = (from sq in Parse.Char('[').Token()
                                                         from name in Parse.LetterOrDigit.Many().Text()
                                                         from subsection in quotedIdentifier.Optional()
                                                         from sqc in Parse.Char(']').Token()
                                                         from cmn in comment.Optional().Token()
-                                                        select new ConfigItemSection(name,cmn.GetOrDefault() as ConfigItemComment, subsection.GetOrDefault() as ConfigItemQuotedIdentifier)).Token();
-        public static readonly Parser<ConfigItem> keyname= ( from first in Parse.Letter.AtLeastOnce().Text()
+                                                        select new ConfigItemSection(name,cmn.GetOrDefault() as ConfigItemComment, subsection.GetOrDefault())).Token();
+        public static readonly Parser<string> keyname= ( from first in Parse.Letter.AtLeastOnce().Text()
                                                              from trailing in Parse.Or(Parse.LetterOrDigit,Parse.Char('-')).Many().Text()
-                                                             select new ConfigItemKeyName(first+trailing)
+                                                             select first+trailing
                                                              ).Token();
-       /*
-        public static readonly Parser<ConfigItem> assign = (from kn in keyname
-                                                            from eq in Parse.Char('=').Token()
-                                                            from rhs in ( from first in Parse.CharExcept('"').AtLeastOnce().Text()
-                                                                          from trail in Parse.CharExcept(";#").Many().Text() select first+trail).Optional())
-                                                                          .Or((from v in quotedValue as Parser<ConfigItemQuotedIdentifier> select v.Identifier)) 
-                                                            ).Token();*/
+       
+        public static readonly Parser<ConfigItem> assign = (from kn in keyname.Token()
+                                                            from rhs in (from eq in Parse.Char('=').Token()
+                                                            from rhs in (quotedValue.Or(Parse.CharExcept(" ;#").Many().Text()).Token()).Token()
+                                                            select rhs
+                                                            ).Optional()
+                                                            from cmn in comment.Optional().Token()
+                                                            select new ConfigItemAssign(kn,rhs.GetOrDefault(),cmn.GetOrDefault() as ConfigItemComment)).Token();
+
+        public static readonly Parser<IEnumerable<ConfigItem>> config = (from c in comment.
+                                                                                   Or(section).
+                                                                                   Or(assign)
+                                                                         select c).Many();
+
+
        
     }
 }
