@@ -16,5 +16,10 @@ namespace GitConfigParser
 
         public string Prefix { get; }
         public string Comment { get; }
+
+        public override void Apply(Configuration c)
+        {
+            //swallow comments, till now
+        }
     }
 }

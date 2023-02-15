@@ -8,5 +8,6 @@ namespace GitConfigParser
 {
     public abstract class ConfigItem
     {
+        public abstract void Apply(Configuration c);
     }
 }
