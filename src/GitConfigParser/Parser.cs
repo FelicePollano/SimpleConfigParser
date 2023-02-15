@@ -53,7 +53,7 @@ namespace GitConfigParser
        
         public static readonly Parser<ConfigItem> assign = (from kn in keyname.Token()
                                                             from rhs in (from eq in Parse.Char('=').Token()
-                                                            from rhs in (quotedValue.Or(Parse.CharExcept(" ;#").Many().Text()).Token()).Token()
+                                                            from rhs in (quotedValue.Or(Parse.CharExcept(" ;#\r\n").Many().Text())).Token()
                                                             select rhs
                                                             ).Optional()
                                                             from cmn in comment.Optional().Token()

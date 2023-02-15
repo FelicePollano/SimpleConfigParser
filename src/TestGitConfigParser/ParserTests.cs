@@ -256,5 +256,20 @@ namespace TestGitConfigParser
             Assert.Equal("12345", (parsed[4] as ConfigItemAssign)?.Rhs);
 
         }
+        [Fact]
+        public void using_config_class()
+        {
+            var kn = @"
+                auto   ; explicit true, out of any section
+                ;example config
+                [ Test ]
+                xyz ;no value
+                [Test ""ab.cd.;xyz""]  ;with comment
+                k=12345
+            ";
+            Configuration c = new Configuration();
+            c.Add(kn);
+
+        }
     }
 }

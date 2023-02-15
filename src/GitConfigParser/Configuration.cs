@@ -10,15 +10,14 @@ namespace GitConfigParser
     public class Configuration:Section
     {
         Section current;
-        Dictionary<string, Section> sections = new Dictionary<string, Section>();
-       
-        public void  Add(Stream s)
+        readonly Dictionary<string, Section> sections = new Dictionary<string, Section>();
+
+        public Dictionary<string, Section> Sections => sections;
+
+        public void  Add(string s)
         {
             current = this;
-            using (var sr = new StreamReader(s))
-            {
-                var items = Parser.config.Parse(sr.ReadToEnd());
-            }
+            var items = Parser.config.Parse(s);
         }
     }
 }
