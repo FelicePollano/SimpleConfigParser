@@ -1,5 +1,6 @@
 using GitConfigParser;
 using Sprache;
+using System.Globalization;
 
 namespace TestGitConfigParser
 {
@@ -269,7 +270,8 @@ namespace TestGitConfigParser
             ";
             Configuration c = new Configuration();
             c.Add(kn);
-
+            Assert.Equal(true.ToString(CultureInfo.InvariantCulture), c["auto"]);
+            Assert.True(c.ContainsKey("Test"));
         }
     }
 }
