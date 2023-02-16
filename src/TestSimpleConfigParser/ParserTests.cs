@@ -1,8 +1,8 @@
-using GitConfigParser;
+using SimpleConfigParser;
 using Sprache;
 using System.Globalization;
 
-namespace TestGitConfigParser
+namespace TestSimpleConfigParser
 {
     public class ParserTests
     {
@@ -271,7 +271,9 @@ namespace TestGitConfigParser
             Configuration c = new Configuration();
             c.Add(kn);
             Assert.Equal(true.ToString(CultureInfo.InvariantCulture), c["auto"]);
-            Assert.True(c.ContainsKey("Test"));
+            Assert.True(c.Sections.ContainsKey("Test"));
+            Assert.True(c.Sections["Test"].Sections.ContainsKey("ab.cd.;xyz"));
+            Assert.Equal("12345", c.Sections["Test"].Sections["ab.cd.;xyz"]["k"]);
         }
     }
 }

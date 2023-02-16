@@ -1,6 +1,6 @@
 ﻿using Sprache;
 
-namespace GitConfigParser
+namespace SimpleConfigParser
 {
     /*
      * https://git-scm.com/docs/git-config#_configuration_file

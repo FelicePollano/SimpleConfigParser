@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GitConfigParser\GitConfigParser.csproj" />
+    <ProjectReference Include="..\SimpleConfigParser\SimpleConfigParser.csproj" />
   </ItemGroup>
 
 </Project>
